@@ -1,20 +1,20 @@
 services:
-  web:
-    build:
-      context: ./client
-    restart: always
-    environment:
-      - NODE_ENV=development
-      - WATCHPACK_POLLING=true
-    ports:
-      - "3000:3000"
-    develop:
-      watch:
-        - path: ./client/src
-          target: /app/src
-          action: sync
-        - path: ./client/package.json
-          action: rebuild
+  # web:
+  #   build:
+  #     context: ./client
+  #   restart: always
+  #   environment:
+  #     - NODE_ENV=development
+  #     - WATCHPACK_POLLING=true
+  #   ports:
+  #     - "3000:3000"
+  #   develop:
+  #     watch:
+  #       - path: ./client/src
+  #         target: /app/src
+  #         action: sync
+  #       - path: ./client/package.json
+  #         action: rebuild
 
   usersDB:
     image: mysql:latest
@@ -49,5 +49,22 @@ services:
         - path: ./users
           action: rebuild
 
+  posts-service:
+    build:
+      context: ./posts
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - AWS_ACCESS_KEY_ID=AKIAYS2NWTRY6O6BJZ4G
+      - AWS_SECRET_ACCESS_KEY=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
+    develop:
+      watch:
+        - path: ./posts
+          action: rebuild
+
+
 volumes:
   users_data:
+  posts_data:
