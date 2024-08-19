@@ -28,11 +28,12 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - users_data:/var/lib/mysql  # Corrected path
+      - users_data:/var/lib/mysql # Corrected path
 
   users-service:
     build:
       context: ./users
+    restart: always
     container_name: users-service
     environment:
       DB_HOST: usersDB
@@ -42,6 +43,7 @@ services:
       DB_NAME: users_db
     depends_on:
       - usersDB
+      - rabbitmq
     ports:
       - "3001:3001"
     develop:
@@ -49,22 +51,90 @@ services:
         - path: ./users
           action: rebuild
 
+  feed-stream-processor:
+    build:
+      context: ./feed-stream-processor
+    restart: always
+    container_name: feed-stream-processor
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3002:3002"
+    develop:
+      watch:
+        - path: ./feed-stream-processor
+          action: rebuild
+
   posts-service:
     build:
       context: ./posts
     restart: always
     ports:
-      - "8000:8000"
+      - "3003:3003"
     environment:
       - PYTHONUNBUFFERED=1
       - AWS_ACCESS_KEY_ID=AKIAYS2NWTRY6O6BJZ4G
       - AWS_SECRET_ACCESS_KEY=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
+    depends_on:
+      - rabbitmq
     develop:
       watch:
         - path: ./posts
           action: rebuild
 
+  feed-service:
+    build:
+      context: ./feed
+    restart: always
+    ports:
+      - "3004:3004"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - rabbitmq
+    develop:
+      watch:
+        - path: ./feed
+          action: rebuild
+
+  followers-service:
+    build:
+      context: ./followers
+    restart: always
+    ports:
+      - "3005:3005"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - rabbitmq
+    develop:
+      watch:
+        - path: ./followers
+          action: rebuild
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    hostname: myrabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: jaysurya00
+      RABBITMQ_DEFAULT_PASS: muskansinghvi
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
 volumes:
   users_data:
   posts_data:
+  rabbitmq_data:
+  redis_data:

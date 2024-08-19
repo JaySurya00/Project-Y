@@ -11,10 +11,12 @@
   "description": "",
   "dependencies": {
     "@jaysuryaraj00/custom-middlewares": "^1.0.0",
+    "@types/amqplib": "^0.10.5",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mysql": "^2.15.26",
     "@types/node": "^22.1.0",
+    "amqplib": "^0.10.4",
     "cookie-session": "^2.1.0",
     "express": "^4.19.2",
     "express-validator": "^7.1.0",

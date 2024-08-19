@@ -1,7 +1,6 @@
 import mysql, { PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DBConnection } from '../DB/users_db';
 import User from '../models/users';
-import { DatabaseConnectionError } from '@jaysuryaraj00/custom-middlewares';
 
 interface IUserRepository {
     getAll(): Promise<User[]>;

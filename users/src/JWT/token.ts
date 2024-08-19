@@ -3,7 +3,10 @@ import User from '../models/users';
 
 interface UserData {
     id: number;
+    first_name: string;
+    last_name: string;
     username: string;
+    email:string
 }
 
 function generateToken(userData: UserData): string {

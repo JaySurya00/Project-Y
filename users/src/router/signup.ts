@@ -4,6 +4,7 @@ import users from "../CRUD/userRepository";
 import { validateRequest, BadRequestError } from "@jaysuryaraj00/custom-middlewares";
 import { decodeToken, generateToken } from "../JWT/token";
 import User from "../models/users";
+import rabbitmqWrapper from "../rabbitmqWrapper";
 
 const router= Router();
 
@@ -42,7 +43,8 @@ router.post('/api/users/signup',[
         return;
     }
     const user= await users.createUser(userData) as User;
-    const token= generateToken({id:user.id, username:user.username});
+    await rabbitmqWrapper.publish("users",{id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email, username: user.username});
+    const token= generateToken({id:user.id, username:user.username, first_name: user.first_name, last_name: user.last_name, email: user.email});
     req.session={
         jwt: token
     }
