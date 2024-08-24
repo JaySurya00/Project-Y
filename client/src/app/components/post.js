@@ -1,5 +1,7 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
+'use client'
 import { useState } from "react";
+import { Box, Button, Modal, Typography, TextField, IconButton } from "@mui/material";
+import ImageIcon from '@mui/icons-material/Image';
 
 const style = {
     position: 'absolute',
@@ -13,14 +15,31 @@ const style = {
     p: 4,
 };
 
-
 export default function Post() {
     const [modalOpen, setModalOpen] = useState(false);
+    const [tweetText, setTweetText] = useState("");
+    const [tweetImage, setTweetImage] = useState(null);
+
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
+
+    const handleImageUpload = (event) => {
+        setTweetImage(URL.createObjectURL(event.target.files[0]));
+    };
+
+    const handlePostTweet = () => {
+        // Here you can handle the tweet submission logic
+        console.log("Tweet:", tweetText);
+        console.log("Image URL:", tweetImage);
+        // Clear inputs after posting
+        setTweetText("");
+        setTweetImage(null);
+        handleModalClose();
+    };
+
     return (
         <>
-            <Button  variant="contained" onClick={handleModalOpen}>Post</Button>
+            <Button variant="contained" onClick={handleModalOpen}>Post</Button>
             <Modal
                 open={modalOpen}
                 onClose={handleModalClose}
@@ -29,14 +48,32 @@ export default function Post() {
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Text in a modal
+                        Create a Tweet
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography>
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        variant="outlined"
+                        placeholder="What's happening?"
+                        value={tweetText}
+                        onChange={(e) => setTweetText(e.target.value)}
+                        sx={{ mt: 2 }}
+                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                        <IconButton component="label">
+                            <ImageIcon />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={handleImageUpload}
+                            />
+                        </IconButton>
+                        <Button variant="contained" onClick={handlePostTweet}>Tweet</Button>
+                    </Box>
                 </Box>
             </Modal>
         </>
-
-    )
+    );
 }

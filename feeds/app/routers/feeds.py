@@ -10,10 +10,11 @@ from app.errors.not_authorized_error import NotAuthorizedError
 from app.schema.user import User
 
 from app.redis.redis_client import redisClient
+from app.utils.make_tweets_request import get_tweets
 
 router= APIRouter()
 
-@router.get('/timeline')
+@router.get('/feeds')
 async def getTimeline(session: Annotated[Optional[str], Cookie()] = None):
     try:
         if session is None:
@@ -24,8 +25,8 @@ async def getTimeline(session: Annotated[Optional[str], Cookie()] = None):
         raise NotAuthorizedError()
     else:
         user_id= user.id
-        posts= redisClient.get_posts(str(user_id))
-        return {
-            "posts": posts
-        }
+        tweets_id= redisClient.get_posts(str(user_id))
+        
+        tweets= await get_tweets(tweets_id=tweets_id,cookie=session)
+        return tweets
         

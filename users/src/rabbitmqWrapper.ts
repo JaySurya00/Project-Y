@@ -34,6 +34,7 @@ class RabbitMQWrapper {
         }
         try {
             const channel: Channel = await this._connection.createChannel();
+            await channel.assertQueue(queue, { durable: true });
             channel.sendToQueue(queue, Buffer.from(JSON.stringify(payload)))
             console.log("User created event published");
         }

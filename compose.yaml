@@ -1,20 +1,35 @@
 services:
-  # web:
-  #   build:
-  #     context: ./client
-  #   restart: always
-  #   environment:
-  #     - NODE_ENV=development
-  #     - WATCHPACK_POLLING=true
-  #   ports:
-  #     - "3000:3000"
-  #   develop:
-  #     watch:
-  #       - path: ./client/src
-  #         target: /app/src
-  #         action: sync
-  #       - path: ./client/package.json
-  #         action: rebuild
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - users-service
+      - tweets-service
+      - followers-service
+      - feeds-service
+      - web
+
+  web:
+    build:
+      context: ./client
+    restart: always
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    ports:
+      - "3000:3000"
+    develop:
+      watch:
+        - path: ./client/src
+          target: /app/src
+          action: rebuild
+        - path: ./client/package.json
+          action: rebuild
 
   usersDB:
     image: mysql:latest
@@ -51,23 +66,23 @@ services:
         - path: ./users
           action: rebuild
 
-  feed-stream-processor:
+  feeds-stream-processor:
     build:
-      context: ./feed-stream-processor
+      context: ./feeds-stream-processor
     restart: always
-    container_name: feed-stream-processor
+    container_name: feeds-stream-processor
     depends_on:
       - rabbitmq
     ports:
       - "3002:3002"
     develop:
       watch:
-        - path: ./feed-stream-processor
+        - path: ./feeds-stream-processor
           action: rebuild
 
-  posts-service:
+  tweets-service:
     build:
-      context: ./posts
+      context: ./tweets
     restart: always
     ports:
       - "3003:3003"
@@ -79,12 +94,12 @@ services:
       - rabbitmq
     develop:
       watch:
-        - path: ./posts
+        - path: ./tweets
           action: rebuild
 
-  feed-service:
+  feeds-service:
     build:
-      context: ./feed
+      context: ./feeds
     restart: always
     ports:
       - "3004:3004"
@@ -94,7 +109,7 @@ services:
       - rabbitmq
     develop:
       watch:
-        - path: ./feed
+        - path: ./feeds
           action: rebuild
 
   followers-service:
@@ -135,6 +150,5 @@ services:
 
 volumes:
   users_data:
-  posts_data:
   rabbitmq_data:
   redis_data:

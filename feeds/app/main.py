@@ -5,7 +5,7 @@ from app.middlewares.request_validation_handler import request_validation_error
 from fastapi.exceptions import RequestValidationError
 from app.redis.redis_client import redisClient
 
-from app.routers.timeline import router as timelineRouter
+from app.routers.feeds import router as feedsRouter
 
 app = FastAPI()
 
@@ -19,7 +19,7 @@ async def shutdown():
     redisClient.close()
 
 
-app.include_router(timelineRouter,prefix='/api')
+app.include_router(feedsRouter,prefix='/api')
 
 app.add_exception_handler(RequestValidationError, request_validation_error)
 app.add_exception_handler(CustomError, error_handler)

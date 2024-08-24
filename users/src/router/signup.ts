@@ -9,7 +9,7 @@ import rabbitmqWrapper from "../rabbitmqWrapper";
 const router= Router();
 
 
-router.post('/api/users/signup',[
+router.post('/api/users',[
     body('first_name')
         .trim()
         .notEmpty()
@@ -48,6 +48,7 @@ router.post('/api/users/signup',[
     req.session={
         jwt: token
     }
+
     res.status(201).send(user);
 })
 

@@ -4,7 +4,6 @@ import aio_pika.abc
 import json
 from typing import Annotated
 from app.utils.message_handler import message_handler
-from app.schema.post import Post
 
 class RabbitMQWrapper:
     __connection: aio_pika.abc.AbstractConnection=None
@@ -41,7 +40,7 @@ class RabbitMQWrapper:
             # Ensure the queue exists
             await self.__channel.declare_queue(queue_name, durable=True)
 
-            # Serialize the Post object to a JSON string
+            # Serialize the Tweet object to a JSON string
             message_body = json.dumps(payload)
 
             # Create the message to be published

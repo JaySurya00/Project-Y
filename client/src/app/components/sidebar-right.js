@@ -1,24 +1,23 @@
-import { Box, Button, Divider } from "@mui/material"
-
+import { Box, Button, Divider, List, ListItem, ListItemText } from "@mui/material";
 
 export default function SideBarRight() {
     return (
-        <>
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant="text">Following</Button>
-                <Divider orientation="vertical" variant="middle" flexItem />
-                <Button variant="text">Followers</Button>
+        <Box sx={{ padding: '1rem' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Button variant="text" sx={{ flexGrow: 1 }}>Following</Button>
+                <Divider orientation="vertical" flexItem sx={{ margin: '0 1rem' }} />
+                <Button variant="text" sx={{ flexGrow: 1 }}>Followers</Button>
             </Box>
-            <Divider orientation="horizontal" variant="middle" flexItem />
+            <Divider sx={{ marginBottom: '1rem' }} />
             <Box>
-                <p>Friend 1</p>
-                <p>Friend 2</p>
-                <p>Friend 3</p>
-                <p>Friend 4</p>
-                <p>Friend 5</p>
-                <p>Friend 6</p>
-                <p>Friend 7</p>
+                <List>
+                    {['Friend 1', 'Friend 2', 'Friend 3', 'Friend 4', 'Friend 5', 'Friend 6', 'Friend 7'].map((friend, index) => (
+                        <ListItem key={index} sx={{ padding: '0.5rem 0' }}>
+                            <ListItemText primary={friend} />
+                        </ListItem>
+                    ))}
+                </List>
             </Box>
-        </>
-    )
+        </Box>
+    );
 }
