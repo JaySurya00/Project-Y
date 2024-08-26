@@ -13,7 +13,10 @@ export default function Timeline() {
     useEffect(() => {
         const fetchTweets = async () => {
             const tweets = await doRequest();
-            setTweets(tweets);
+            console.log('from timeline', tweets);
+            if(tweets){
+                setTweets(tweets);
+            }
         }
         fetchTweets();
     }, [])

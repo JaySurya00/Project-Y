@@ -8,10 +8,11 @@ import {
   Typography,
   Avatar,
   CardMedia,
+  Box
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 
-const Tweet = ({ tweet }) => {
+const Tweets = ({ tweet }) => {
   const { _id, username, body, media_file_url, created_at } = tweet;
 
   const formatDate = (dateString) => {
@@ -36,17 +37,19 @@ const Tweet = ({ tweet }) => {
         </Typography>
       </CardContent>
       {media_file_url && (
-        <Image
-          src={media_file_url}
-          height={500}
-          width={500}
-          objectFit="cover" // Handle how the image should fit within its container
-          alt="Tweet media"
-        />
+        <Box sx={{marginLeft: 4}}>
+          <Image
+            src={media_file_url}
+            height={500}
+            width={500}
+            objectFit="cover" // Handle how the image should fit within its container
+            alt="Tweet media"
+          />
+        </Box>
       )}
     </Card>
   );
 };
 
 
-export default Tweet;
+export default Tweets;

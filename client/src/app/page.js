@@ -1,90 +1,42 @@
-'use client'
+'use client';
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Button, CssBaseline, TextField, Link, Grid, Box, Typography, Container, Snackbar } from '@mui/material';
 import useRequest from './hooks/use-request';
 import { useRouter } from 'next/navigation';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#4caf50', // Green for primary color
-    },
-    secondary: {
-      main: '#3f51b5', // Blue for secondary color
-    },
-  },
-  typography: {
-    h5: {
-      fontWeight: 700, // Bolder heading text
-    },
-    body2: {
-      fontSize: '0.875rem',
-      fontWeight: 500,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: '8px', // Rounded button corners
-          padding: '10px', // More padding for a comfortable click area
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#f4f6f8', // Light background for text fields
-          borderRadius: '8px',
-        },
-      },
-    },
-    MuiCheckbox: {
-      styleOverrides: {
-        root: {
-          color: '#4caf50', // Match checkbox color with primary color
-        },
-      },
-    },
-  },
-});
-
+import { useUserContext } from './context/userContext';
 
 export default function SignIn() {
+  const [open, setOpen] = React.useState(false);
+  const [errorOpen, setErrorOpen] = React.useState(false);
+  const { getUser } = useUserContext(); // Fetch user context
 
-  const router= useRouter();
+  const router = useRouter();
 
-  const {doRequest, errors}= useRequest({
+  const { doRequest, errors } = useRequest({
     url: '/api/users/signin/',
     method: 'post',
-    onSuccess:()=>{
-      router.push('/home');
-    }
-  })
+    onSuccess: () => {
+      getUser(); // Update user context after sign-in
+      setOpen(true); // Open success Snackbar
+      setTimeout(() => {
+        router.push('/home'); // Redirect to home after 1 second
+      }, 1000);
+    },
+    onError: () => {
+      setErrorOpen(true); // Open error Snackbar on sign-in failure
+    },
+  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const username= data.get('username');
-    const password= data.get('password');
-    await doRequest({username, password});
+    const username = data.get('username');
+    const password = data.get('password');
+    await doRequest({ username, password });
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -95,11 +47,8 @@ export default function SignIn() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Welcome To miniX
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -107,7 +56,7 @@ export default function SignIn() {
               required
               fullWidth
               id="username"
-              label="username"
+              label="Username"
               name="username"
               autoComplete="username"
               autoFocus
@@ -123,10 +72,6 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
               variant="outlined"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
             />
             <Button
               type="submit"
@@ -151,8 +96,20 @@ export default function SignIn() {
             </Grid>
           </Box>
         </Box>
-        {errors}
+        {errors && errors} {/* Display request errors if any */}
       </Container>
-    </ThemeProvider>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={() => setOpen(false)}
+        message="Signin Complete"
+      />
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={3000}
+        onClose={() => setErrorOpen(false)}
+        message="Signin Failed"
+      />
+    </>
   );
 }

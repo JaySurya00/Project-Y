@@ -23,11 +23,11 @@ async def follower_handler(request: FollowRequest, session: Annotated[str, Cooki
         raise NotAuthorizedError()
     else:
         follower_id= user.id
-        followee_id= request.followee_id
-        response= await neo4j.follow(followee_id, follower_id)
-        return {"response": response}
+        followee_username= request.username
+        response= await neo4j.follow(followee_username=followee_username, follower_id=follower_id)
+        return {"user": response}
     
-@router.get('/followers')
+@router.get('/follows/followers')
 async def follower_handler(session: Annotated[str, Cookie()]=None):
     try:
         if session is None:
@@ -41,7 +41,7 @@ async def follower_handler(session: Annotated[str, Cookie()]=None):
         response= await neo4j.followers(user_id=user.id)
         return {"followers": response}
     
-@router.get('/followees')
+@router.get('/follows/followees')
 async def follower_handler(session: Annotated[str, Cookie()]=None):
     try:
         if session is None:
@@ -54,3 +54,35 @@ async def follower_handler(session: Annotated[str, Cookie()]=None):
     else:
         response= await neo4j.followees(user_id=user.id)
         return {"followees": response}
+    
+
+@router.get('/follows/youmayknow')
+async def follower_handler(session: Annotated[str, Cookie()]=None):
+    try:
+        if session is None:
+            raise NotAuthorizedError()
+        jwt_token = json.loads(base64.b64decode(session).decode("utf-8"))["jwt"]
+        print(jwt.decode(jwt_token, "muskansinghvi", algorithms=["HS256"]))
+        user = User(**jwt.decode(jwt_token, "muskansinghvi", algorithms=["HS256"]))
+    except (DecodeError, ExpiredSignatureError, InvalidTokenError, TypeError) as err:
+        raise NotAuthorizedError()
+    else:
+        response= await neo4j.youMayKnow(user_id= user.id)
+        return {"youMayKnow": response}
+    
+
+@router.post('/follows/unfollow')
+async def follower_handler(request: FollowRequest, session: Annotated[str, Cookie()]=None):
+    try:
+        if session is None:
+            raise NotAuthorizedError()
+        jwt_token = json.loads(base64.b64decode(session).decode("utf-8"))["jwt"]
+        print(jwt.decode(jwt_token, "muskansinghvi", algorithms=["HS256"]))
+        user = User(**jwt.decode(jwt_token, "muskansinghvi", algorithms=["HS256"]))
+    except (DecodeError, ExpiredSignatureError, InvalidTokenError, TypeError) as err:
+        raise NotAuthorizedError()
+    else:
+        follower_id= user.id
+        followee_id= request.followee_id
+        response= await neo4j.unfollow(followee_id, follower_id)
+        return {"response": response}

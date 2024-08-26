@@ -10,10 +10,14 @@ export default function useRequest({ url, method, body, onSuccess }) {
     async function doRequest(props = {}) {
         try {
             setErrors(null);
+
+            const requestData = body instanceof FormData ? body : { ...body, ...props };
+
             const response = await axios({
                 method: method,
                 url: url,
-                data: { ...body, ...props }
+                data: requestData,
+                headers: requestData instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined
             });
 
             if (onSuccess) {
