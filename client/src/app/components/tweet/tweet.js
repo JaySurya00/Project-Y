@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Box, Button, Modal, Typography, TextField, IconButton, Snackbar, Alert } from "@mui/material";
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
-import useRequest from "../hooks/use-request"; // Optionally use your custom hook
+import useRequest from "../../hooks/use-request"; // Optionally use your custom hook
 
 const style = {
     position: 'absolute',

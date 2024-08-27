@@ -41,6 +41,7 @@ class Neo4JClient {
         const followersID= followerList.map((user)=>{
             return user.id['low'];
         })
+        followersID.push(userId);
         return followersID;
     }
 }

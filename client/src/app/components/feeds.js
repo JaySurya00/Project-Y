@@ -1,8 +1,8 @@
 'use client'
-import Tweets from "../components/tweets";
+import Tweets from "./tweet/tweets";
 import { useEffect, useState } from "react";
 import useRequest from "../hooks/use-request";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 export default function Feeds() {
     const [tweets, setTweets] = useState([]);
@@ -28,7 +28,10 @@ export default function Feeds() {
     }
     return (
         <>
-            {tweets.length > 0 ? tweets.map((tweet) => { return (<Tweets key={tweet.tweet._id} tweet={tweet.tweet} />) }) : <p>There are no tweets from your followee.</p>}
+            {tweets.length > 0 ? tweets.map((tweet) => { return (<Tweets key={tweet.tweet._id} tweet={tweet.tweet} />) }) :
+                <Typography variant="body1" align="center" color="text.secondary">
+                    There are no tweets from your followees.
+                </Typography>}
         </>
     );
 }

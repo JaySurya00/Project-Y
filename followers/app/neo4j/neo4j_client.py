@@ -48,14 +48,20 @@ class Neo4jWrapper:
         if self.__driver is None:
             raise Exception("Cannot create node before connection to Neo4j")
         driver = self.__driver
+
         query = """
         MATCH (follower:Person {id: $follower_id}), (followee:Person {username: $followee_username})
-        CREATE (follower)-[:FOLLOW]->(followee)
-        RETURN follower, followee
+        MERGE (follower)-[r:FOLLOW]->(followee)
+        RETURN follower, followee, r
         """
+
         result, summary, key = driver.execute_query(
-            query, follower_id=follower_id, followee_username=followee_username, database_="neo4j"
+            query,
+            follower_id=follower_id,
+            followee_username=followee_username,
+            database_="neo4j",
         )
+
         response = result[0][1] if result else None
         return response
 
@@ -71,10 +77,10 @@ class Neo4jWrapper:
         result, summary, key = driver.execute_query(
             query, user_id=user_id, database_="neo4j"
         )
-        followers = [record['follower'] for record in result] if result else []
-        
+        followers = [record["follower"] for record in result] if result else []
+
         return followers
-    
+
     async def followees(self, user_id: int):
         if self.__driver is None:
             raise Exception("Cannot create node before connection to Neo4j")
@@ -87,10 +93,10 @@ class Neo4jWrapper:
         result, summary, key = driver.execute_query(
             query, user_id=user_id, database_="neo4j"
         )
-        followees = [record['followee'] for record in result] if result else []
-        
+        followees = [record["followee"] for record in result] if result else []
+
         return followees
-    
+
     async def youMayKnow(self, user_id: int):
         if self.__driver is None:
             raise Exception("Cannot get suggestions before connection to Neo4j")
@@ -114,25 +120,27 @@ class Neo4jWrapper:
 
         if result:
             for record in result:
-                if record['suggested']:
-                    suggestions.append(record['suggested'])
-                if record['follower']:
-                    suggestions.append(record['follower'])
+                if record["suggested"]:
+                    suggestions.append(record["suggested"])
+                if record["follower"]:
+                    suggestions.append(record["follower"])
 
         return suggestions
 
-    
-    async def unfollow(self, followee_id: int, follower_id: int):
+    async def unfollow(self, followee_username: str, follower_username: str):
         if self.__driver is None:
             raise Exception("Cannot unfollow before connection to Neo4j")
         driver = self.__driver
         query = """
-        MATCH (follower:Person {id: $follower_id})-[r:FOLLOW]->(followee:Person {id: $followee_id})
+        MATCH (follower:Person {username: $follower_username})-[r:FOLLOW]->(followee:Person {username: $followee_username})
         DELETE r
         RETURN follower, followee
         """
         result, summary, key = driver.execute_query(
-            query, follower_id=follower_id, followee_id=followee_id, database_="neo4j"
+            query,
+            follower_username=follower_username,
+            followee_username=followee_username,
+            database_="neo4j",
         )
         response = result[0] if result else None
         return response

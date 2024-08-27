@@ -1,6 +1,6 @@
 'use client'
 import { Box, Typography } from "@mui/material";
-import Tweet from "./tweets";
+import Tweet from "./tweet/tweets";
 import { useEffect, useState } from "react";
 import useRequest from "../hooks/use-request";
 

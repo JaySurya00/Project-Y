@@ -3,17 +3,20 @@ import { Button, CssBaseline, TextField, Link, Grid, Box, Typography, Container,
 import useRequest from '../hooks/use-request';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useUserContext } from '../context/userContext';
 
 export default function SignUp() {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [errorOpen, setErrorOpen] = useState(false);
+    const {getUser}= useUserContext();
 
     const { doRequest, errors } = useRequest({
         url: '/api/users/',
         method: 'POST',
-        onSuccess: () => {
+        onSuccess: async() => {
             setOpen(true);
+            await getUser();
             setTimeout(() => {
                 router.push('/home');
             }, 1000);

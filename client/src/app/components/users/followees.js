@@ -12,7 +12,6 @@ const Followees = () => {
         const getFollowees = async () => {
             try {
                 const res = await axios.get('/api/follows/followees');
-                console.log(res.data);
                 setFollowees(res.data.followees);
             } catch (err) {
                 setError('Failed to load followees.');
@@ -22,6 +21,20 @@ const Followees = () => {
         };
         getFollowees();
     }, []);
+
+    const handleUnfollow = async (username) => {
+        try {
+            const res = await axios.post('/api/follows/unfollow', { username });
+            console.log(res.data);
+
+            // Update the UI by removing the unfollowed user from the list
+            setFollowees((prevFollowees) => prevFollowees.filter(followee => followee.username !== username));
+        } catch (err) {
+            console.error('Failed to unfollow the user:', err);
+            // Optionally, you can set an error state to display a message to the user
+            setError('Failed to unfollow the user.');
+        }
+    };
 
     if (loading) {
         return (
@@ -77,7 +90,7 @@ const Followees = () => {
                     <Button
                         variant="outlined"
                         color="secondary"
-                        onClick={() => console.log(followee.username)}
+                        onClick={() => handleUnfollow(followee.username)}
                         sx={{
                             textTransform: 'none',
                             borderRadius: '20px',

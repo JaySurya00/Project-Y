@@ -12,7 +12,6 @@ const YouMayKnow = () => {
         const fetchSuggestions = async () => {
             try {
                 const res = await axios.get('/api/follows/youmayknow');
-                console.log(res.data);
                 setSuggestions(res.data.youMayKnow);
             } catch (err) {
                 setError('Failed to load suggestions.');

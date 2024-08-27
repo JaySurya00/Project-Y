@@ -23,6 +23,18 @@ const Followers = () => {
         getFollowers();
     }, []);
 
+    const removeFollower= async(username)=>{
+        try {
+            const res = await axios.post('/api/follows/remove', { username });
+            // Update the UI by removing the unfollowed user from the list
+            setFollowers((prevFollowers) => prevFollowers.filter(follower => follower.username !== username));
+        } catch (err) {
+            console.error('Failed to unfollow the user:', err);
+            // Optionally, you can set an error state to display a message to the user
+            setError('Failed to unfollow the user.');
+        }
+    }
+
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -77,7 +89,7 @@ const Followers = () => {
                     <Button
                         variant="outlined"
                         color="secondary"
-                        onClick={() => console.log(followers.username)}
+                        onClick={() => removeFollower(follower.username)}
                         sx={{
                             textTransform: 'none',
                             borderRadius: '20px',
