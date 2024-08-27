@@ -10,12 +10,12 @@ interface UserData {
 }
 
 function generateToken(userData: UserData): string {
-    const token = jwt.sign(userData, 'muskansinghvi');
+    const token = jwt.sign(userData, process.env.JWT_KEY!);
     return token;
 }
 
 function decodeToken(token:string): UserData{
-    const data= jwt.verify(token, 'muskansinghvi');
+    const data= jwt.verify(token, process.env.JWT_KEY!);
     return data as UserData;
 }
 

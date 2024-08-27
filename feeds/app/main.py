@@ -4,13 +4,15 @@ from app.errors.custom_error import CustomError
 from app.middlewares.request_validation_handler import request_validation_error
 from fastapi.exceptions import RequestValidationError
 from app.redis.redis_client import redisClient
-
+import os
 from app.routers.feeds import router as feedsRouter
 
 app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
+    if not os.getenv("REDIS_HOST") or not os.getenv("REDIS_PORT"):
+        raise Exception("Redis env not defined")
     redisClient.connect()
     
 

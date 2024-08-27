@@ -4,6 +4,12 @@ import rabbitmqWrapper from "./rabbitmqWrapper";
 
 const start= async()=>{
     try{
+        if(!process.env.JWT_KEY){
+            throw new Error('JWT_KEY must be defined')
+        }
+        if(!process.env.RABBITMQ_URI){
+            throw new Error('RABBITMQ_URI must be defined')
+        }
         await DBConnection();
         await rabbitmqWrapper.connect();
 

@@ -5,6 +5,7 @@ from jwt.exceptions import DecodeError, ExpiredSignatureError, InvalidTokenError
 import json
 import jwt
 import base64
+import os
 
 from app.errors.not_authorized_error import NotAuthorizedError
 from app.schema.user import User
@@ -20,7 +21,7 @@ async def getTimeline(session: Annotated[Optional[str], Cookie()] = None):
         if session is None:
             raise NotAuthorizedError()
         jwt_token = json.loads(base64.b64decode(session).decode("utf-8"))["jwt"]
-        user = User(**jwt.decode(jwt_token, "muskansinghvi", algorithms=["HS256"]))
+        user = User(**jwt.decode(jwt_token, os.getenv("JWT_KEY"), algorithms=["HS256"]))
     except (DecodeError, ExpiredSignatureError, InvalidTokenError, TypeError) as err:
         raise NotAuthorizedError()
     else:

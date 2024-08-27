@@ -9,12 +9,19 @@ from app.middlewares.request_validation_handler import request_validation_error
 from app.rabbitmq_wrapper import rabbitmqWrapper
 from app.CDC.cdc_listener import cdc_listener
 from app.middlewares.authentication import authenticate
+import os
 
     
 app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
+    if not os.getenv("MONGO_URI"):
+        raise Exception("MONGO_URI not defined")
+    if not os.getenv("AWS_ACCESS_KEY_ID") or not os.getenv("AWS_SECRET_ACCESS_KEY"):
+        raise Exception("AWS credentials not defined")
+    if not os.getenv("JWT_KEY"):
+        raise Exception("JWT_KEY not defined")
     await mongoDB_client.connect()
     await rabbitmqWrapper.connect()
     asyncio.create_task(cdc_listener())

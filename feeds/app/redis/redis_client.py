@@ -1,5 +1,6 @@
 from redis import Redis, RedisError
 from typing import Optional
+import os
 
 from app.errors.database_connection_error import DatabaseConnectionError
 from app.errors.bad_request_error import BadRequestError
@@ -10,7 +11,7 @@ class RedisClient:
 
     def connect(self):
         try:
-            self.__client = Redis(host="redis", port=6379)
+            self.__client = Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"))
             self.__client.ping()  # Test the connection
             print("Connected to Redis")
         except RedisError as ex:

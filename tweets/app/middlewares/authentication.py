@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from app.errors.not_authorized_error import NotAuthorizedError
+import os
 import base64
 import json
 import logging
@@ -20,7 +21,7 @@ async def authenticate(request: Request, call_next):
         if not jwt_token:
             raise NotAuthorizedError()
 
-        user = User(**jwt.decode(jwt_token, "muskansinghvi", algorithms=["HS256"]))
+        user = User(**jwt.decode(jwt_token, os.getenv("JWT_KEY"), algorithms=["HS256"]))
         request.state.user = user
         
         response = await call_next(request)

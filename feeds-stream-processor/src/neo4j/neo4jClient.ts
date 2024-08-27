@@ -1,16 +1,17 @@
 import neo4j, {Record, Node} from "neo4j-driver"
 import { BadRequestError } from "@jaysuryaraj00/custom-middlewares"
 
-const NEO4J_URI = "neo4j+s://4a289658.databases.neo4j.io"
-const NEO4J_USERNAME = "neo4j"
-const NEO4J_PASSWORD = "T3jg7pT-Gd0SYjzldToD_JVv9tPrv4pm-tME6l5y-JI"
-const AURA_INSTANCEID = "4a289658"
-const AURA_INSTANCENAME = "Instance01"
+const NEO4J_URI = process.env.NEO4J_URI
+const NEO4J_USERNAME = process.env.NEO4J_USERNAME
+const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD
+const AURA_INSTANCEID = process.env.NEO4J_INSTANCEID
+const AURA_INSTANCENAME = process.env.NEO4J_INSTANCENAME
+
 
 class Neo4JClient {
     private _driver: any
     async connect() {
-        this._driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
+        this._driver = neo4j.driver(NEO4J_URI!, neo4j.auth.basic(NEO4J_USERNAME!, NEO4J_PASSWORD!));
         const serverInfo = await this._driver.getServerInfo()
         console.log('Connection established')
         console.log(serverInfo)

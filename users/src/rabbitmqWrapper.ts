@@ -14,7 +14,7 @@ class RabbitMQWrapper {
         if(this._connection) return this._connection
         for (let i = 1; i < 6; i++) {
             try {
-                this._connection = await client.connect('amqp://jaysurya00:muskansinghvi@myrabbit:5672');
+                this._connection = await client.connect(process.env.RABBITMQ_URI!);
                 console.log("Connected to RabbitMQ")
                 return this._connection;
             }

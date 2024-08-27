@@ -1,12 +1,7 @@
 from neo4j import GraphDatabase
 from app.schema.user import User
+import os
 
-
-NEO4J_URI = "neo4j+s://4a289658.databases.neo4j.io"
-NEO4J_USERNAME = "neo4j"
-NEO4J_PASSWORD = "T3jg7pT-Gd0SYjzldToD_JVv9tPrv4pm-tME6l5y-JI"
-AURA_INSTANCEID = "4a289658"
-AURA_INSTANCENAME = "Instance01"
 
 
 class Neo4jWrapper:
@@ -20,7 +15,7 @@ class Neo4jWrapper:
     async def connect(self):
         try:
             self.__driver = GraphDatabase.driver(
-                NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD)
+                os.getenv("NEO4J_URI"), auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD"))
             )
             self.__driver.verify_connectivity()
             print("Connected to Neo4j instance")

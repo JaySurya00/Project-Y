@@ -14,7 +14,7 @@ class RedisClient {
     async connect(): Promise<RedisClientType> {
         if (this._client) return this._client;
         try {
-            this._client = createClient({ url: 'redis://redis:6379' });
+            this._client = createClient({ url: process.env.REDIS_URI });
             await this._client.connect();
             console.log('Connected to RedisDB');
             return this._client;

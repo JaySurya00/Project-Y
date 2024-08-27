@@ -3,6 +3,7 @@ import aio_pika
 import aio_pika.abc
 from typing import Annotated
 from app.utils.message_handler import message_handler
+import os
 
 
 class RabbitMQWrapper:
@@ -20,7 +21,7 @@ class RabbitMQWrapper:
             return self.__connection
         for i in range(5):
             try:
-                self.__connection = await aio_pika.connect_robust("amqp://jaysurya00:muskansinghvi@myrabbit:5672")
+                self.__connection = await aio_pika.connect_robust(os.getenv("RABBITMQ_URI"))
                 print("Connected to RabbitMQ")
                 self.__channel= await self.__connection.channel()
                 return self.__connection

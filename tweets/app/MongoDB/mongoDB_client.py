@@ -4,6 +4,7 @@ from app.schema.tweet import Tweet
 from bson import ObjectId
 from typing import List, Optional
 import logging
+import os
 
 
 class MongoDB:
@@ -15,7 +16,7 @@ class MongoDB:
             return self.__client
         try:
             self.__client = AsyncIOMotorClient(
-                "mongodb+srv://jaysurya00:Jay%40surya2001@projectscluster.aykhspt.mongodb.net/?retryWrites=true&w=majority&appName=ProjectsCluster"
+                os.getenv("MONGO_URI")
             )
             server_info = await self.__client.server_info()
             self.collection = (self.__client["tweets_db"])["tweets"]

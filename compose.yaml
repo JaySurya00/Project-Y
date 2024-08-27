@@ -43,19 +43,23 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - users_data:/var/lib/mysql # Corrected path
+      - users_data:/var/lib/mysql
 
   users-service:
     build:
       context: ./users
     restart: always
     container_name: users-service
+    env_file:
+      - ./.env
     environment:
-      DB_HOST: usersDB
-      DB_PORT: 3306
-      DB_USER: user
-      DB_PASSWORD: muskansinghvi
-      DB_NAME: users_db
+      - JWT_KEY=${JWT_KEY}
+      - DB_HOST=usersDB
+      - DB_PORT=3306
+      - DB_USER=user
+      - DB_PASSWORD=muskansinghvi
+      - DB_NAME=users_db
+      - RABBITMQ_URI=${RABBITMQ_URI}
     depends_on:
       - usersDB
       - rabbitmq
@@ -71,6 +75,17 @@ services:
       context: ./feeds-stream-processor
     restart: always
     container_name: feeds-stream-processor
+    env_file:
+      - ./.env
+    environment:
+      - JWT_KEY=${JWT_KEY}
+      - NEO4J_URI=${NEO4J_URI}
+      - NEO4J_USERNAME=${NEO4J_USERNAME}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - AURA_INSTANCEID=${AURA_INSTANCEID}
+      - AURA_INSTANCENAME=${AURA_INSTANCENAME}
+      - REDIS_URI=${REDIS_URI}
+      - RABBITMQ_URI=${RABBITMQ_URI}
     depends_on:
       - rabbitmq
     ports:
@@ -86,10 +101,14 @@ services:
     restart: always
     ports:
       - "3003:3003"
+    env_file:
+      - ./.env
     environment:
+      - JWT_KEY_FILE=${JWT_KEY}
       - PYTHONUNBUFFERED=1
-      - AWS_ACCESS_KEY_ID=AKIAYS2NWTRY6O6BJZ4G
-      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - MONGO_URI=${MONGO_URI}
     depends_on:
       - rabbitmq
     develop:
@@ -103,7 +122,12 @@ services:
     restart: always
     ports:
       - "3004:3004"
+    env_file:
+      - ./.env
     environment:
+      - JWT_KEY=${JWT_KEY}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
       - PYTHONUNBUFFERED=1
     depends_on:
       - rabbitmq
@@ -118,7 +142,15 @@ services:
     restart: always
     ports:
       - "3005:3005"
+    env_file:
+      - ./.env
     environment:
+      - JWT_KEY=${JWT_KEY}
+      - NEO4J_URI=${NEO4J_URI}
+      - NEO4J_USERNAME=${NEO4J_USERNAME}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - AURA_INSTANCEID=${AURA_INSTANCEID}
+      - AURA_INSTANCENAME=${AURA_INSTANCENAME}
       - PYTHONUNBUFFERED=1
     depends_on:
       - rabbitmq

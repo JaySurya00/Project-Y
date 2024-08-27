@@ -4,6 +4,15 @@ import redisClient from './redis/redisClient';
 import neo4jClient from './neo4j/neo4jClient';
 
 async function start(){
+    if(!process.env.NEO4J_URI || !process.env.NEO4J_USERNAME || !process.env.NEO4J_PASSWORD){
+        throw new Error('NEO4J env not defined')
+    }
+    if(!process.env.JWT_KEY){
+        throw new Error('JWT_KEY not defined')
+    }
+    if(!process.env.RABBITMQ_URI){
+        throw new Error('RABBITMQ_URI not defined')
+    }
     await rabbitmqWrapper.connect();
     await rabbitmqWrapper.consume('posts');
     await neo4jClient.connect();
